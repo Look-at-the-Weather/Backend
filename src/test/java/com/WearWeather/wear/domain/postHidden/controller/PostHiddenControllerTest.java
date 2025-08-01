@@ -26,13 +26,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
+@WithMockUser
 @WebMvcTest(PostHiddenController.class)
-@Import(RestDocsConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureMockMvc
 class PostHiddenControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -57,14 +55,15 @@ class PostHiddenControllerTest extends RestDocsTestSupport {
           .andExpect(header().string("Location", "/posts/" + postId + "/hide"))
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SUCCESS_POST_HIDDEN))
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("postId").description("숨길 게시글 ID")
-            ),
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("postId").description("숨길 게시글 ID")
+              ),
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 }

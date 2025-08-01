@@ -11,11 +11,10 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.WearWeather.wear.document.utils.RestDocsConfig;
 import com.WearWeather.wear.document.utils.RestDocsTestSupport;
 import com.WearWeather.wear.domain.auth.dto.request.LoginRequest;
 import com.WearWeather.wear.domain.auth.dto.response.TokenResponse;
@@ -25,24 +24,19 @@ import com.WearWeather.wear.domain.auth.facade.ReissueFacade;
 import com.WearWeather.wear.global.jwt.JwtCookieManager;
 import com.WearWeather.wear.global.jwt.UserIdArgumentResolver;
 import jakarta.servlet.http.Cookie;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
+@WithMockUser
 @WebMvcTest(AuthController.class)
-@Import(RestDocsConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
 class AuthControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -60,12 +54,6 @@ class AuthControllerTest extends RestDocsTestSupport {
     @MockBean
     private UserIdArgumentResolver loggedInUserArgumentResolver;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        given(loggedInUserArgumentResolver.supportsParameter(any())).willReturn(true);
-        given(loggedInUserArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(1L);
-    }
-
     @Test
     @DisplayName("로그인 API")
     void login() throws Exception {
@@ -78,15 +66,15 @@ class AuthControllerTest extends RestDocsTestSupport {
         // when & then
         mockMvc.perform(post("/auth/login")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(createJson(request)))
+            .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isOk())
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("email").description("사용자 이메일"),
-              fieldWithPath("password").description("비밀번호")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("email").description("사용자 이메일"),
+                fieldWithPath("password").description("비밀번호")
+              )
+            ));
     }
 
     @Test
@@ -101,16 +89,16 @@ class AuthControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value("success logout"))
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestHeaders(
-              headerWithName("Authorization").description("Bearer 토큰")
-            ),
-            responseFields(
-              fieldWithPath("success").description("성공 여부"),
-              fieldWithPath("message").description("로그아웃 결과 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestHeaders(
+                headerWithName("Authorization").description("Bearer 토큰")
+              ),
+              responseFields(
+                fieldWithPath("success").description("성공 여부"),
+                fieldWithPath("message").description("로그아웃 결과 메시지")
+              )
+            ));
     }
 
     @Test
@@ -125,11 +113,11 @@ class AuthControllerTest extends RestDocsTestSupport {
         mockMvc.perform(post("/auth/reissue")
             .cookie(refreshTokenCookie))
           .andExpect(status().isOk())
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestCookies(
-              cookieWithName("refreshToken").description("리프레시 토큰 쿠키")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestCookies(
+                cookieWithName("refreshToken").description("리프레시 토큰 쿠키")
+              )
+            ));
     }
 }

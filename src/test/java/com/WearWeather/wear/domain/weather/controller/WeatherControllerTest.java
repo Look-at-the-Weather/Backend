@@ -16,19 +16,15 @@ import com.WearWeather.wear.domain.weather.dto.response.WeatherTmpResponse;
 import com.WearWeather.wear.domain.weather.service.WeatherService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(WeatherController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class WeatherControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -52,17 +48,18 @@ class WeatherControllerTest extends RestDocsTestSupport {
           .andExpect(jsonPath("$.currentTemp").value("24.0"))
           .andExpect(jsonPath("$.weatherType").value("맑음"))
           .andExpect(jsonPath("$.weatherMessage").value("선선한 날씨입니다."))
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("longitude").description("경도"),
-              parameterWithName("latitude").description("위도")
-            ),
-            responseFields(
-              fieldWithPath("currentTemp").description("현재 기온"),
-              fieldWithPath("weatherType").description("날씨 유형"),
-              fieldWithPath("weatherMessage").description("날씨 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("longitude").description("경도"),
+                parameterWithName("latitude").description("위도")
+              ),
+              responseFields(
+                fieldWithPath("currentTemp").description("현재 기온"),
+                fieldWithPath("weatherType").description("날씨 유형"),
+                fieldWithPath("weatherMessage").description("날씨 메시지")
+              )
+            ));
     }
 
     @Test
@@ -82,16 +79,17 @@ class WeatherControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.minTemp").value("18.0"))
           .andExpect(jsonPath("$.maxTemp").value("27.0"))
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("longitude").description("경도"),
-              parameterWithName("latitude").description("위도")
-            ),
-            responseFields(
-              fieldWithPath("minTemp").description("최저 기온"),
-              fieldWithPath("maxTemp").description("최고 기온")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("longitude").description("경도"),
+                parameterWithName("latitude").description("위도")
+              ),
+              responseFields(
+                fieldWithPath("minTemp").description("최저 기온"),
+                fieldWithPath("maxTemp").description("최고 기온")
+              )
+            ));
     }
 
     @Test
@@ -116,16 +114,17 @@ class WeatherControllerTest extends RestDocsTestSupport {
           .andExpect(jsonPath("$.categorySentence").value("가벼운 겉옷이 필요해요."))
           .andExpect(jsonPath("$.outfit").value("얇은 니트와 청바지"))
           .andExpect(jsonPath("$.outfitImages").isArray())
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("tmp").description("현재 기온")
-            ),
-            responseFields(
-              fieldWithPath("category").description("카테고리"),
-              fieldWithPath("categorySentence").description("추천 문구"),
-              fieldWithPath("outfit").description("추천 옷차림"),
-              fieldWithPath("outfitImages").description("추천 옷차림 이미지 리스트")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("tmp").description("현재 기온")
+              ),
+              responseFields(
+                fieldWithPath("category").description("카테고리"),
+                fieldWithPath("categorySentence").description("추천 문구"),
+                fieldWithPath("outfit").description("추천 옷차림"),
+                fieldWithPath("outfitImages").description("추천 옷차림 이미지 리스트")
+              )
+            ));
     }
 }

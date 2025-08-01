@@ -30,12 +30,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(AwsS3Controller.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class AwsS3ControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -62,16 +61,16 @@ class AwsS3ControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.id").value(1L))
           .andExpect(jsonPath("$.url").value("https://s3.bucket.com/image.jpg"))
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestParts(
-              partWithName("file").description("업로드할 이미지 파일")
-            ),
-            responseFields(
-              fieldWithPath("id").description("업로드된 이미지 ID"),
-              fieldWithPath("url").description("S3 이미지 URL")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestParts(
+                partWithName("file").description("업로드할 이미지 파일")
+              ),
+              responseFields(
+                fieldWithPath("id").description("업로드된 이미지 ID"),
+                fieldWithPath("url").description("S3 이미지 URL")
+              )
+            ));
     }
 
     @Test
@@ -84,11 +83,11 @@ class AwsS3ControllerTest extends RestDocsTestSupport {
         // when & then
         mockMvc.perform(delete("/s3/post-image/{imageId}", imageId))
           .andExpect(status().isNoContent())
-          .andDo(print())
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("imageId").description("삭제할 이미지 ID")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("imageId").description("삭제할 이미지 ID")
+              )
+            ));
     }
 }

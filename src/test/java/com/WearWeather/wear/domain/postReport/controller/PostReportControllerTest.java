@@ -26,12 +26,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(PostReportController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class PostReportControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -60,18 +59,18 @@ class PostReportControllerTest extends RestDocsTestSupport {
           .andExpect(header().string("Location", "/posts/" + postId + "/report"))
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SUCCESS_REPORT_POST))
-          .andDo(print())
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("postId").description("신고할 게시글 ID")
-            ),
-            queryParameters(
-              parameterWithName("reason").description("신고 사유")
-            ),
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("postId").description("신고할 게시글 ID")
+              ),
+              queryParameters(
+                parameterWithName("reason").description("신고 사유")
+              ),
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 }

@@ -37,12 +37,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
+@WithMockUser
 @WebMvcTest(LikeController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureMockMvc
 class LikeControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -72,15 +71,15 @@ class LikeControllerTest extends RestDocsTestSupport {
         mockMvc.perform(post("/likes/posts/{postId}", 1L))
           .andExpect(status().isCreated())
           .andExpect(jsonPath("$.likedCount").value(10))
-          .andDo(print())
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("postId").description("게시글 ID")
-            ),
-            responseFields(
-              fieldWithPath("likedCount").description("좋아요 수")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("postId").description("게시글 ID")
+              ),
+              responseFields(
+                fieldWithPath("likedCount").description("좋아요 수")
+              )
+            ));
     }
 
     @Test
@@ -92,15 +91,15 @@ class LikeControllerTest extends RestDocsTestSupport {
         mockMvc.perform(delete("/likes/posts/{postId}", 1L))
           .andExpect(status().isCreated())
           .andExpect(jsonPath("$.likedCount").value(7))
-          .andDo(print())
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("postId").description("게시글 ID")
-            ),
-            responseFields(
-              fieldWithPath("likedCount").description("좋아요 수")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("postId").description("게시글 ID")
+              ),
+              responseFields(
+                fieldWithPath("likedCount").description("좋아요 수")
+              )
+            ));
     }
 
     @Test
@@ -130,23 +129,23 @@ class LikeControllerTest extends RestDocsTestSupport {
           .andExpect(jsonPath("$.myLikedPosts[0].postId").value(1L))
           .andExpect(jsonPath("$.myLikedPosts[0].seasonTag").value("봄"))
           .andExpect(jsonPath("$.total").value(1))
-          .andDo(print())
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("page").description("페이지 번호"),
-              parameterWithName("size").description("페이지 크기")
-            ),
-            responseFields(
-              fieldWithPath("myLikedPosts[].postId").description("게시글 ID"),
-              fieldWithPath("myLikedPosts[].thumbnail").description("썸네일 이미지 URL"),
-              fieldWithPath("myLikedPosts[].location.city").description("도시 이름"),
-              fieldWithPath("myLikedPosts[].location.district").description("구 이름"),
-              fieldWithPath("myLikedPosts[].seasonTag").description("계절 태그"),
-              fieldWithPath("myLikedPosts[].weatherTags").description("날씨 태그 리스트"),
-              fieldWithPath("myLikedPosts[].temperatureTags").description("온도 태그 리스트"),
-              fieldWithPath("myLikedPosts[].likeByUser").description("유저가 좋아요했는지 여부"),
-              fieldWithPath("total").description("총 페이지 수")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("page").description("페이지 번호"),
+                parameterWithName("size").description("페이지 크기")
+              ),
+              responseFields(
+                fieldWithPath("myLikedPosts[].postId").description("게시글 ID"),
+                fieldWithPath("myLikedPosts[].thumbnail").description("썸네일 이미지 URL"),
+                fieldWithPath("myLikedPosts[].location.city").description("도시 이름"),
+                fieldWithPath("myLikedPosts[].location.district").description("구 이름"),
+                fieldWithPath("myLikedPosts[].seasonTag").description("계절 태그"),
+                fieldWithPath("myLikedPosts[].weatherTags").description("날씨 태그 리스트"),
+                fieldWithPath("myLikedPosts[].temperatureTags").description("온도 태그 리스트"),
+                fieldWithPath("myLikedPosts[].likeByUser").description("유저가 좋아요했는지 여부"),
+                fieldWithPath("total").description("총 페이지 수")
+              )
+            ));
     }
 }
