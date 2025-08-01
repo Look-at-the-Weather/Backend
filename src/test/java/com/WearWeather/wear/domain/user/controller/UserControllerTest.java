@@ -29,21 +29,17 @@ import com.WearWeather.wear.global.common.ResponseMessage;
 import com.WearWeather.wear.global.jwt.UserIdArgumentResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(UserController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class UserControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -72,20 +68,21 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SUCCESS_USER))
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("email").description("이메일"),
-              fieldWithPath("password").description("비밀번호"),
-              fieldWithPath("name").description("이름"),
-              fieldWithPath("nickname").description("닉네임"),
-              fieldWithPath("social").description("소셜 로그인 여부") // 여기!
-            )
-            ,
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("email").description("이메일"),
+                fieldWithPath("password").description("비밀번호"),
+                fieldWithPath("name").description("이름"),
+                fieldWithPath("nickname").description("닉네임"),
+                fieldWithPath("social").description("소셜 로그인 여부") // 여기!
+              )
+              ,
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 
     @Test
@@ -98,15 +95,16 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.available").value(true)) // <-- 수정
           .andExpect(jsonPath("$.message").value(ResponseMessage.NICKNAME_AVAILABLE))
-          .andDo(restDocs.document(
-            pathParameters(
-              parameterWithName("nickname").description("중복 확인할 닉네임")
-            ),
-            responseFields(
-              fieldWithPath("available").description("사용 가능 여부"), // <-- 수정
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              pathParameters(
+                parameterWithName("nickname").description("중복 확인할 닉네임")
+              ),
+              responseFields(
+                fieldWithPath("available").description("사용 가능 여부"), // <-- 수정
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 
     @Test
@@ -120,15 +118,16 @@ class UserControllerTest extends RestDocsTestSupport {
             .content(createJson(request)))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.email").value("test@email.com"))
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("name").description("사용자 이름"),
-              fieldWithPath("nickname").description("사용자 닉네임")
-            ),
-            responseFields(
-              fieldWithPath("email").description("조회된 사용자 이메일")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("name").description("사용자 이름"),
+                fieldWithPath("nickname").description("사용자 닉네임")
+              ),
+              responseFields(
+                fieldWithPath("email").description("조회된 사용자 이메일")
+              )
+            ));
     }
 
     @Test
@@ -142,16 +141,17 @@ class UserControllerTest extends RestDocsTestSupport {
             .content(createJson(request)))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.userId").value(1L))
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("email").description("사용자 이메일"),
-              fieldWithPath("name").description("사용자 이름"),
-              fieldWithPath("nickname").description("사용자 닉네임")
-            ),
-            responseFields(
-              fieldWithPath("userId").description("조회된 사용자 ID")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("email").description("사용자 이메일"),
+                fieldWithPath("name").description("사용자 이름"),
+                fieldWithPath("nickname").description("사용자 닉네임")
+              ),
+              responseFields(
+                fieldWithPath("userId").description("조회된 사용자 ID")
+              )
+            ));
     }
 
     @Test
@@ -165,16 +165,17 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.MODIFY_PASSWORD))
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("userId").description("회원 ID"),
-              fieldWithPath("password").description("변경할 비밀번호")
-            ),
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("userId").description("회원 ID"),
+                fieldWithPath("password").description("변경할 비밀번호")
+              ),
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 
     @Test
@@ -189,14 +190,15 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(jsonPath("$.name").value("홍길동"))
           .andExpect(jsonPath("$.nickname").value("길동이"))
           .andExpect(jsonPath("$.social").value(false))
-          .andDo(restDocs.document(
-            responseFields(
-              fieldWithPath("email").description("이메일"),
-              fieldWithPath("name").description("이름"),
-              fieldWithPath("nickname").description("닉네임"),
-              fieldWithPath("social").description("소셜 로그인 여부")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              responseFields(
+                fieldWithPath("email").description("이메일"),
+                fieldWithPath("name").description("이름"),
+                fieldWithPath("nickname").description("닉네임"),
+                fieldWithPath("social").description("소셜 로그인 여부")
+              )
+            ));
     }
 
     @Test
@@ -210,16 +212,17 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.MODIFY_USERINFO))
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("password").description("비밀번호"),
-              fieldWithPath("nickname").description("변경할 닉네임")
-            ),
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("password").description("비밀번호"),
+                fieldWithPath("nickname").description("변경할 닉네임")
+              ),
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 
     @Test
@@ -232,14 +235,15 @@ class UserControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SUCCESS_DELETE_USER))
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("deleteReason").description("회원 탈퇴 사유")
-            ),
-            responseFields(
-              fieldWithPath("success").description("요청 성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("deleteReason").description("회원 탈퇴 사유")
+              ),
+              responseFields(
+                fieldWithPath("success").description("요청 성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 }

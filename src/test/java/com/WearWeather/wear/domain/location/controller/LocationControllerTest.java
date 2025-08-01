@@ -26,13 +26,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 import reactor.core.publisher.Mono;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
+@WithMockUser
 @WebMvcTest(LocationController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureMockMvc
 class LocationControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -43,8 +42,8 @@ class LocationControllerTest extends RestDocsTestSupport {
     void getLocationData() throws Exception {
         mockMvc.perform(get("/basic-location"))
           .andExpect(status().isOk())
-          .andDo(print())
-          .andDo(restDocs.document());
+          .andDo(
+            restDocs.document());
     }
 
     @Test
@@ -61,19 +60,19 @@ class LocationControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.city").value("서울"))
           .andExpect(jsonPath("$.district").value("강남구"))
-          .andDo(print())
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("longitude").description("경도"),
-              parameterWithName("latitude").description("위도")
-            ),
-            responseFields(
-              fieldWithPath("city").description("도시 이름"),
-              fieldWithPath("cityId").description("도시 ID"),
-              fieldWithPath("district").description("구 이름"),
-              fieldWithPath("districtId").description("구 ID")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("longitude").description("경도"),
+                parameterWithName("latitude").description("위도")
+              ),
+              responseFields(
+                fieldWithPath("city").description("도시 이름"),
+                fieldWithPath("cityId").description("도시 ID"),
+                fieldWithPath("district").description("구 이름"),
+                fieldWithPath("districtId").description("구 ID")
+              )
+            ));
     }
 
     @Test
@@ -90,21 +89,21 @@ class LocationControllerTest extends RestDocsTestSupport {
             .param("address", "서울"))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$[0].address_name").value("서울 강남구"))
-          .andDo(print())
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("address").description("검색할 주소 문자열")
-            ),
-            responseFields(
-              fieldWithPath("[].address_name").description("전체 주소"),
-              fieldWithPath("[].longitude").description("경도"),
-              fieldWithPath("[].latitude").description("위도"),
-              fieldWithPath("[].cityName").description("도시 이름"),
-              fieldWithPath("[].cityId").description("도시 ID"),
-              fieldWithPath("[].districtName").description("구 이름"),
-              fieldWithPath("[].districtId").description("구 ID")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("address").description("검색할 주소 문자열")
+              ),
+              responseFields(
+                fieldWithPath("[].address_name").description("전체 주소"),
+                fieldWithPath("[].longitude").description("경도"),
+                fieldWithPath("[].latitude").description("위도"),
+                fieldWithPath("[].cityName").description("도시 이름"),
+                fieldWithPath("[].cityId").description("도시 ID"),
+                fieldWithPath("[].districtName").description("구 이름"),
+                fieldWithPath("[].districtId").description("구 ID")
+              )
+            ));
     }
 
     @Test
@@ -125,14 +124,14 @@ class LocationControllerTest extends RestDocsTestSupport {
           .andExpect(jsonPath("$.region[0].cityId").value(1L))
           .andExpect(jsonPath("$.region[0].cityName").value("서울"))
           .andExpect(jsonPath("$.region[0].district[0].districtName").value("강남구"))
-          .andDo(print())
-          .andDo(restDocs.document(
-            responseFields(
-              fieldWithPath("region[].cityId").description("도시 ID"),
-              fieldWithPath("region[].cityName").description("도시 이름"),
-              fieldWithPath("region[].district[].districtId").description("구 ID"),
-              fieldWithPath("region[].district[].districtName").description("구 이름")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              responseFields(
+                fieldWithPath("region[].cityId").description("도시 ID"),
+                fieldWithPath("region[].cityName").description("도시 이름"),
+                fieldWithPath("region[].district[].districtId").description("구 ID"),
+                fieldWithPath("region[].district[].districtName").description("구 이름")
+              )
+            ));
     }
 }

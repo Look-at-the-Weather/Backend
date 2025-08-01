@@ -22,13 +22,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 
-
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(EmailController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class EmailControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -47,16 +45,16 @@ class EmailControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SEND_EMAIL))
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("email").description("사용자 이메일")
-            ),
-            responseFields(
-              fieldWithPath("success").description("성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("email").description("사용자 이메일")
+              ),
+              responseFields(
+                fieldWithPath("success").description("성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 
     @Test
@@ -72,16 +70,16 @@ class EmailControllerTest extends RestDocsTestSupport {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value(ResponseMessage.SUCCESS_EMAIL_VERIFICATION))
-          .andDo(print())
-          .andDo(restDocs.document(
-            requestFields(
-              fieldWithPath("email").description("사용자 이메일"),
-              fieldWithPath("code").description("이메일 인증 코드")
-            ),
-            responseFields(
-              fieldWithPath("success").description("성공 여부"),
-              fieldWithPath("message").description("응답 메시지")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              requestFields(
+                fieldWithPath("email").description("사용자 이메일"),
+                fieldWithPath("code").description("이메일 인증 코드")
+              ),
+              responseFields(
+                fieldWithPath("success").description("성공 여부"),
+                fieldWithPath("message").description("응답 메시지")
+              )
+            ));
     }
 }

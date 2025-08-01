@@ -22,12 +22,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@SuppressWarnings("NonAsciiCharacters")
-@MockBean(JpaMetamodelMappingContext.class)
+@WithMockUser
 @WebMvcTest(OAuthController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class OAuthControllerTest extends RestDocsTestSupport {
 
     @MockBean
@@ -53,11 +52,11 @@ class OAuthControllerTest extends RestDocsTestSupport {
         mockMvc.perform(get("/oauth/kakao")
             .param("code", authorizationCode))
           .andExpect(status().isOk())
-          .andDo(print())
-          .andDo(restDocs.document(
-            queryParameters(
-              parameterWithName("code").description("카카오 인가 코드")
-            )
-          ));
+          .andDo(
+            restDocs.document(
+              queryParameters(
+                parameterWithName("code").description("카카오 인가 코드")
+              )
+            ));
     }
 }
