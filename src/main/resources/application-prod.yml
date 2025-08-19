@@ -13,3 +13,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+cloud:
+  aws:
+    credentials:
+      access-key: ENC(dg+YZMgLhAO8SEBkoPuzwZrfks++GI0uAhxFEOwgSt8=)
+      secret-key: ENC(7/25IfLDHcZdwlg1G6bZ+SfMYHMvxGO2m7Flj9exFuEBOoeWOFzIp1rVp1IbS5GRRerdja+k2sE=)
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ENC(nUpCEKz7QOM3FPB/idcTzOyY7keJIb3OPv+0bFb8LXA=)
+    stack:
+      auto: false
