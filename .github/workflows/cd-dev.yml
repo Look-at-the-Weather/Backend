@@ -1,0 +1,146 @@
+name: cd-dev
+
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  DOCKERHUB_REPOSITORY: lookattheweather
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Seoul'
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Check system timezone
+        run: |
+          echo "Current date and time: $(date)"
+          echo "TZ environment variable: $TZ"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Clean Build With Gradle Wrapper
+        run: ./gradlew clean build
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+        env:
+          GITHUB_TOKEN: ${{ secrets.TEST_RESULT_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Back Up Image For Rollback
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:latest || true
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:latest ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:previous || true
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:previous || true
+
+#      - name: Docker Image Build And Push
+#        run: docker build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:${{ github.sha }}-dev -f Dockerfile . --push
+
+      - name: Docker Image Build And Push
+        run: |
+            docker buildx build \
+              --platform linux/amd64,linux/arm64 \
+              -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}-dev \
+              -f Dockerfile \
+              --push .
+
+  pull-and-deploy:
+    needs: build-and-push
+
+#    runs-on: dev
+    runs-on: [self-hosted,dev]
+    steps:
+      - uses: actions/checkout@v4     # ← 필수! EC2 러너에 레포 파일 가져오기
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Clean Up Legacy Image
+        run: |
+          export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
+          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_PASSWORD }}
+          export TAG=${{ github.sha }}-dev
+          docker compose down || true
+          docker rmi $(docker images -q) -f || true
+
+      - name: Docker Compose up
+        run: |
+          export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
+          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_PASSWORD }}
+          export TAG=${{ github.sha }}-dev
+          docker compose up -d
+
+      - name: Health Check with Retry
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 1
+          max_attempts: 5
+          retry_wait_seconds: 6
+          command: |
+            response=$(curl -s http://127.0.0.1:8080/api/v1/actuator/health)
+            status=$(echo $response | jq -r '.status')
+            if [ "$status" = "UP" ]; then
+              echo "Status is UP. Continuing..."
+              exit 0
+            else
+              echo "Status is NOT UP."
+              exit 1
+            fi
+
+      - name: Rollback if Health Check fails
+        if: failure()
+        run: |
+          docker compose down || true
+          docker rmi $(docker images -q) -f || true
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:previous
+          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_PASSWORD }}
+          export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
+          export TAG=previous
+          docker compose up -d
+
+      - name: Tag successful deployment as latest
+        if: success()
+        run: |
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:${{ github.sha }}-dev ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:latest
+
+      - name: Check Docker Process
+        if: always()
+        run: docker ps
