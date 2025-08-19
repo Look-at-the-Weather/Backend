@@ -1,0 +1,9 @@
+services:
+  app:
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${TAG}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
