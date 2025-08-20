@@ -131,8 +131,8 @@ jobs:
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 3
-          max_attempts: 5
-          retry_wait_seconds: 6
+          max_attempts: 7
+          retry_wait_seconds: 60
           command: |
             response=$(curl -s https://dev-apis.lookattheweather.com/api/v1/actuator/health)
             status=$(echo $response | jq -r '.status')
