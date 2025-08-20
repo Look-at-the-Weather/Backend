@@ -21,10 +21,10 @@ public class CorsConfig {
             "http://localhost:5174",
             "https://look-at-the-weather.vercel.app/",
             "https://localhost:5173",
-            "https://lookattheweather.store",
             "https://dev.lookattheweather.com",
             "https://dev-apis.lookattheweather.com",
-            "https://www.lookattheweather.store"));
+            "https://lookattheweather.com",
+            "https://www.lookattheweather.com"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
