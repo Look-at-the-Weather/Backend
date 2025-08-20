@@ -130,11 +130,11 @@ jobs:
       - name: Health Check with Retry
         uses: nick-invision/retry@v2
         with:
-          timeout_minutes: 1
+          timeout_minutes: 3
           max_attempts: 5
           retry_wait_seconds: 6
           command: |
-            response=$(curl -s http://127.0.0.1:8080/api/v1/actuator/health)
+            response=$(curl -s https://dev-apis.lookattheweather.com/api/v1/actuator/health)
             status=$(echo $response | jq -r '.status')
             if [ "$status" = "UP" ]; then
               echo "Status is UP. Continuing..."
