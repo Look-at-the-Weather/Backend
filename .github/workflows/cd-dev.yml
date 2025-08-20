@@ -99,6 +99,12 @@ jobs:
   pull-and-deploy:
     needs: build-and-push
     runs-on: [self-hosted, dev]
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_REPOSITORY: ${{ env.DOCKERHUB_REPOSITORY }}
+      JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
+      TAG: ${{ github.sha }}-dev
+
     steps:
       - uses: actions/checkout@v4
 
@@ -110,19 +116,11 @@ jobs:
 
       - name: Clean Up Legacy Image
         run: |
-          export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-          export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
-          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_PASSWORD }}
-          export TAG=${{ github.sha }}-dev
           docker compose down || true
           docker rmi $(docker images -q) -f || true
 
       - name: Docker Compose up
         run: |
-          export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
-          export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
-          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_PASSWORD }}
-          export TAG=${{ github.sha }}-dev
           docker compose up -d
 
 #      - name: Health Check with Retry
