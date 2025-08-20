@@ -60,6 +60,9 @@ public class SecurityConfig {
 
           .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(
+              "/actuator/health", "/actuator/health/**", "/actuator/info"
+            ).permitAll()
             .requestMatchers("/auth/login", "/auth/reissue", "/", "/oauth/kakao",
               "/login/page",
               "/users/nickname-check/**", "/email/send-verification", "/email/verify-code",
