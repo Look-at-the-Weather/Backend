@@ -38,7 +38,7 @@ oauth:
       auth: https://kauth.kakao.com
       api: https://kapi.kakao.com
     client-id: ENC(s39dfnWGrONQFfUb+pxR7cVnFjAqbqzysqbGPpDGpHkQKT8DmG2ZmGSW/euD7HLv)
-    redirect-uri: https://lookattheweather.store/api/v1/oauth/kakao
+    redirect-uri: https://lookattheweather.com/api/v1/oauth/kakao
     admin-key: ENC(NsbFNP52vkCwFQEr3xrDBkb1MSPNz4QaAAbOH6N0Cme+ZhqTWCml3LlRJflQhSse)
 
 location:
