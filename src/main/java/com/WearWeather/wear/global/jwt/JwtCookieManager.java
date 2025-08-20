@@ -13,7 +13,6 @@ public class JwtCookieManager {
 
     private static final String ACCESS_TOKEN_COOKIE_NAME = "accessToken";
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
-    private static final String DOMAIN = ".lookattheweather.store";
     private static final String LOCALHOST = "localhost";
 
     private static final int ACCESS_TOKEN_EXPIRATION = 24 * 60 * 60; // 24시간
@@ -41,7 +40,6 @@ public class JwtCookieManager {
           .httpOnly(true)
           .secure(!isLocal)  // 로컬이면 false, 운영이면 true
           .sameSite(isLocal ? "Lax" : "Strict")  // 로컬은 Lax, 운영은 Strict
-          .domain(isLocal ? LOCALHOST : DOMAIN) // 로컬이면 localhost, 운영이면 도메인 지정
           .maxAge(maxAge)
           .build();
 

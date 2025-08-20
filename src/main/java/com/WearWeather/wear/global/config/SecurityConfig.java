@@ -60,6 +60,9 @@ public class SecurityConfig {
 
           .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(
+              "/actuator/health", "/actuator/health/**", "/actuator/info"
+            ).permitAll()
             .requestMatchers("/auth/login", "/auth/reissue", "/", "/oauth/kakao",
               "/login/page",
               "/users/nickname-check/**", "/email/send-verification", "/email/verify-code",
@@ -75,6 +78,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/posts/tmp").permitAll()
 
             .requestMatchers("/h2-console/**").permitAll()
+            .requestMatchers("/docs/**").permitAll()
             .anyRequest().authenticated()
           )
 

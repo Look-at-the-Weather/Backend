@@ -73,17 +73,28 @@ jasypt:
   encryptor:
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
 
+photo:
+  dir: ${java.io.tmpdir}
+
 cloud:
   aws:
     credentials:
-      access-key: ENC(dg+YZMgLhAO8SEBkoPuzwZrfks++GI0uAhxFEOwgSt8=)
-      secret-key: ENC(7/25IfLDHcZdwlg1G6bZ+SfMYHMvxGO2m7Flj9exFuEBOoeWOFzIp1rVp1IbS5GRRerdja+k2sE=)
+      access-key: ENC(IwK9G3Kspc9FECjdnwK59dSM+iyqcUzxVKjtbfodcpY=)
+      secret-key: ENC(H4mew6/KTk3Ga08ogJLvF7+BlcHTu5HSx+t024VKWkFam50sHKl6VOORmEjwldJXH/nb/mJCC0k=)
     region:
       static: ap-northeast-2
     s3:
-      bucket: ENC(nUpCEKz7QOM3FPB/idcTzOyY7keJIb3OPv+0bFb8LXA=)
+      bucket: ENC(D3Ub+IYIZXtIEkzni48cB/SotwB7BPlRAdgGsEP9yVs=)
     stack:
       auto: false
 
-photo:
-  dir: ${java.io.tmpdir}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
