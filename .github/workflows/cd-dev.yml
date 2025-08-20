@@ -112,7 +112,7 @@ jobs:
         run: |
           export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
-          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }
+          export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
           export SPRING_PROFILES_ACTIVE=dev
           export TAG=${{ github.sha }}-dev
           docker compose down || true
@@ -123,7 +123,7 @@ jobs:
           export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export DOCKERHUB_REPOSITORY=$DOCKERHUB_REPOSITORY
           export JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
-         export SPRING_PROFILES_ACTIVE=dev
+          export SPRING_PROFILES_ACTIVE=dev
           export TAG=${{ github.sha }}-dev
           docker compose up -d
 
