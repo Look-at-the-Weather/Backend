@@ -64,9 +64,6 @@ jobs:
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:latest ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:previous || true
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:previous || true
 
-#      - name: Docker Image Build And Push
-#        run: docker build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/$DOCKERHUB_REPOSITORY:${{ github.sha }}-dev -f Dockerfile . --push
-
       - name: Docker Image Build And Push
         run: |
             docker buildx build \
@@ -77,11 +74,9 @@ jobs:
 
   pull-and-deploy:
     needs: build-and-push
-
-#    runs-on: dev
-    runs-on: [self-hosted,dev]
+    runs-on: [self-hosted, dev]
     steps:
-      - uses: actions/checkout@v4     # ← 필수! EC2 러너에 레포 파일 가져오기
+      - uses: actions/checkout@v4
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
