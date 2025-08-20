@@ -7,3 +7,15 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
+
+cloud:
+  aws:
+    credentials:
+      access-key: ENC(IwK9G3Kspc9FECjdnwK59dSM+iyqcUzxVKjtbfodcpY=)
+      secret-key: ENC(H4mew6/KTk3Ga08ogJLvF7+BlcHTu5HSx+t024VKWkFam50sHKl6VOORmEjwldJXH/nb/mJCC0k=)
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ENC(D3Ub+IYIZXtIEkzni48cB/SotwB7BPlRAdgGsEP9yVs=)
+    stack:
+      auto: false

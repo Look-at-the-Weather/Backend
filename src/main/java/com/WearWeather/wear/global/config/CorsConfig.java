@@ -16,7 +16,15 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-            "http://localhost:3000","http://localhost:5173","http://localhost:5174","https://look-at-the-weather.vercel.app/","https://localhost:5173","https://lookattheweather.store","https://www.lookattheweather.store"));
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "https://look-at-the-weather.vercel.app/",
+            "https://localhost:5173",
+            "https://lookattheweather.store",
+            "https://dev.lookattheweather.com",
+            "https://dev-apis.lookattheweather.com",
+            "https://www.lookattheweather.store"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
