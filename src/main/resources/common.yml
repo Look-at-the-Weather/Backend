@@ -87,3 +87,14 @@ cloud:
       bucket: ENC(D3Ub+IYIZXtIEkzni48cB/SotwB7BPlRAdgGsEP9yVs=)
     stack:
       auto: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
