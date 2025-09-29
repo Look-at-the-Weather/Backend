@@ -1,5 +1,4 @@
-## 위치 기반 오늘의 패션 공유 서비스 Look At The Weather
-서비스 URL : https://www.lookattheweather.com
+
 
 ## 프로젝트 소개
 
